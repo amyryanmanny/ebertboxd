@@ -9,11 +9,13 @@ import scrapy
 class RogerEbertSpider(scrapy.Spider):
     name = "Roger Ebert"
     base_url = 'https://www.rogerebert.com'
-    start_urls = [f'{self.base_url}/contributors/roger-ebert']
+
+    def __init__(self):
+        self.start_urls = [f'{self.base_url}/contributors/roger-ebert']
 
     def parse(self, response):
         yield scrapy.Request(
-            url=get_page_url(1),
+            url=self.get_page_url(1),
             headers={'Accept': 'application/json'},
             callback=self.parse_json,
             cb_kwargs=dict(page=1),
@@ -33,7 +35,7 @@ class RogerEbertSpider(scrapy.Spider):
         if more:
             # Read next page
             yield scrapy.Request(
-                url=get_page_url(page + 1),
+                url=self.get_page_url(page + 1),
                 headers={'Accept': 'application/json'},
                 callback=self.parse_json,
                 cb_kwargs={'page': page + 1},
