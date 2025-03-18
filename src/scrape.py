@@ -6,12 +6,10 @@ from urllib.parse import parse_qs, urlparse
 
 import scrapy
 
-def get_page_url(page):
-    return f"https://www.rogerebert.com/contributors/roger-ebert?filters%5Btitle%5D=&sort%5Border%5D=newest&filters%5Byears%5D%5B%5D=1914&filters%5Byears%5D%5B%5D=2024&filters%5Bstar_rating%5D%5B%5D=0.0&filters%5Bstar_rating%5D%5B%5D=4.0&filters%5Bno_stars%5D=1&page={page}"
-
 class RogerEbertSpider(scrapy.Spider):
     name = "Roger Ebert"
-    start_urls = ['https://www.rogerebert.com/contributors/roger-ebert']
+    base_url = 'https://www.rogerebert.com'
+    start_urls = [f'{self.base_url}/contributors/roger-ebert']
 
     def parse(self, response):
         yield scrapy.Request(
@@ -40,6 +38,9 @@ class RogerEbertSpider(scrapy.Spider):
                 callback=self.parse_json,
                 cb_kwargs={'page': page + 1},
             )
+
+    def get_page_url(self, page):
+        return f"{self.base_url}/contributors/roger-ebert?filters%5Btitle%5D=&sort%5Border%5D=newest&filters%5Byears%5D%5B%5D=1914&filters%5Byears%5D%5B%5D=2024&filters%5Bstar_rating%5D%5B%5D=0.0&filters%5Bstar_rating%5D%5B%5D=4.0&filters%5Bno_stars%5D=1&page={page}"
 
     def parse_review(self, response):
         # We can extract the TMDB ID from the JustWatch widget
